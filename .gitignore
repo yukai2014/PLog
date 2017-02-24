@@ -27,3 +27,17 @@
 *.exe
 *.out
 *.app
+
+# build and install
+install/
+deps/
+build/
+
+# eclipse file
+*.cproject
+*.project
+
+# generated log files
+claims_log*
+proc_log
+
