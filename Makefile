@@ -3,8 +3,8 @@
 DIR=$(shell pwd)
 BIN_DIR=$(DIR)/build
 LIB_DIR= /home/imdb/supports/glog-0.3.3/.libs/
-SRC_DIR=$(DIR)
-INCLUDE_DIR=/home/imdb/supports/glog-0.3.3/src/glog
+SRC_DIR=$(DIR)/test
+INCLUDE_DIR=/home/imdb/supports/glog-0.3.3/src/glog $(DIR)/src
 OBJ_DIR=$(DIR)/build
 DEPS_DIR=$(DIR)/deps
 #PROGRAM=$(BIN_DIR)/test
@@ -14,6 +14,9 @@ PROGRAM=$(BIN_DIR)/ProcessLogTest
 EXTENSION=cpp
 OBJS=$(patsubst $(SRC_DIR)/%.$(EXTENSION), $(OBJ_DIR)/%.o,$(wildcard $(SRC_DIR)/*.$(EXTENSION)))
 DEPS=$(patsubst $(OBJ_DIR)/%.o, $(DEPS_DIR)/%.d, $(OBJS))
+
+#$(warning $(OBJS))
+#$(warning $(SRC_DIR))
 
 ###################include头文件路径##################################
 INCLUDE=\

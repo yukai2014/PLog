@@ -44,6 +44,7 @@
 #include <execinfo.h>
 
 #include "./logging.h"
+#include "../src/Logging.h"
 
 using claims::common::Logging;
 using namespace std;
@@ -244,22 +245,20 @@ void LogServer(){
 void LogClient(){
   pthread_t thread_id = pthread_self();
   cout<<thread_id<<". i'm in client"<<endl;
-  close(fd[READ]);
-  int buf_length = sizeof(to_send);
-  *static_cast<int*>(static_cast<void*>(to_send)) = buf_length-sizeof(buf_length);
-  cout<<"In client, buf_length:"<<buf_length<<endl;
-  cout<<"buf header: "
-      <<static_cast<int>(to_send[0])<<", "
-      <<static_cast<int>(to_send[1])<<", "
-      <<static_cast<int>(to_send[2])<<", "
-      <<static_cast<int>(to_send[3])<<endl;
-  ssize_t written_bytes = 0;
+//  close(fd[READ]);
+//  int buf_length = sizeof(to_send);
+//  *static_cast<int*>(static_cast<void*>(to_send)) = buf_length-sizeof(buf_length);
+//  cout<<"In client, buf_length:"<<buf_length<<endl;
+//  cout<<"buf header: "
+//      <<static_cast<int>(to_send[0])<<", "
+//      <<static_cast<int>(to_send[1])<<", "
+//      <<static_cast<int>(to_send[2])<<", "
+//      <<static_cast<int>(to_send[3])<<endl;
+//  ssize_t written_bytes = 0;
   GETCURRENTTIME(start);
   for(int time = 0; time < REPEAT_TIME; ++time) {
     pthread_spin_lock(&spin_lock);
-    if (unlikely(0 >= (written_bytes = write(fd[WRITE], to_send, buf_length)))) {
-      perror("failed to send buf to pipe");
-    }
+    PLog(plog::INFO)<<thread_id<<" zuimeibushi"<<3<<"xiayutian";
     pthread_spin_unlock(&spin_lock);
   }
   cout<<thread_id<<" of plog use "<<GetElapsedTime(start)<< " ms"<<endl;
@@ -398,7 +397,7 @@ int main(int argc, char** argv) {
     //cout<<reinterpret_cast<int>(static_cast<char>(155))<<endl;    // ERROR: invalid cast from type ‘char’ to type ‘int’
 
     int big = -(INT_MAX - 10000);
-    cout<<static_cast<long>(big)<<endl;
+    cout<<static_cast<long>(big)<<endl; // -2147473647
   }
   {
     C c;
@@ -411,9 +410,9 @@ int main(int argc, char** argv) {
   }
   {
     char* buffer = new char[100];
-    LoggerStream(buffer, 100)<<"1"<<sizeof(buffer)<<'a'<<endl;
-    LoggerStream(buffer, 100)<<"2"<<2*sizeof(buffer)<<'b'<<endl;
-    LoggerStream(buffer, 100)<<"3"<<3*sizeof(buffer)<<'c'<<endl;
+    LoggerStream(buffer, 100)<<"1"<<sizeof(buffer)<<'a'<<endl;  // 18a
+    LoggerStream(buffer, 100)<<"2"<<2*sizeof(buffer)<<'b'<<endl;    // 216b
+    LoggerStream(buffer, 100)<<"3"<<3*sizeof(buffer)<<'c'<<endl;    // 324c
   }
   cout << "yukai"<<endl;
   int old_umask = umask(0);
@@ -422,18 +421,19 @@ int main(int argc, char** argv) {
     cout<<"someone else modified the umask."<<endl;
     return 0;
   }
-  if (0 == pipe(fd)) {
-    cout<<"create pipe successfully"<<endl;
-  } else {
-    perror("failed to create pipe.");
-  }
-
-  if (0 == fork()) {
-    LogServer();
-    return 0;
-  }
+//  if (0 == pipe(fd)) {
+//    cout<<"create pipe successfully"<<endl;
+//  } else {
+//    perror("failed to create pipe.");
+//  }
+//
+//  if (0 == fork()) {
+//    LogServer();
+//    return 0;
+//  }
   usleep(1);
   pthread_spin_init(&spin_lock, 0);
+
   std::thread th1(LogClient);
   std::thread th2(LogClient);
   std::thread th3(LogClient);
@@ -446,6 +446,11 @@ int main(int argc, char** argv) {
 
   //  LogClient();
   cout<<"all client threads are going to die!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+
+  PLog(plog::INFO)<<"this is plog ";
+  PLog(plog::INFO)<<"this is plog ";
+  PLog(plog::INFO)<<"this is plog ";
+  PLog(plog::INFO)<<"this is plog ";
 
   /////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////
@@ -467,18 +472,18 @@ int main(int argc, char** argv) {
   /////////////////////////
   cout<<"process id:"<<getpid()<<endl;
   cout<<"========reset signal handler function=========="<<endl;
-  ResetSignalHandler(SIGINT, SIGINTHandler);
-  ResetSignalHandler(SIGILL, SIGINTHandler);
-  ResetSignalHandler(SIGSEGV, SIGINTHandler);
-  ResetSignalHandler(SIGTERM, SIGINTHandler);
-  ResetSignalHandler(SIGFPE, SIGINTHandler);
+//  ResetSignalHandler(SIGINT, SIGINTHandler);
+//  ResetSignalHandler(SIGILL, SIGINTHandler);
+//  ResetSignalHandler(SIGSEGV, SIGINTHandler);
+//  ResetSignalHandler(SIGTERM, SIGINTHandler);
+//  ResetSignalHandler(SIGFPE, SIGINTHandler);
 
 //  sleep(100);
-  ErrorFunction1();
+//  ErrorFunction1();
   //  sleep(3);
   //  std::thread th11([](){int i = 1/1;});
   //  std::thread th112(ErrorFunction1);
   //  int i = 1/0;
-  sleep(3);
+//  sleep(3);
   return 0;
 }

@@ -34,8 +34,9 @@ deps/
 build/
 
 # eclipse file
-*.cproject
-*.project
+*.cproject*
+*.project*
+*.settings*
 
 # generated log files
 claims_log*
